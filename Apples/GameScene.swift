@@ -22,6 +22,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private var score = 0
     private var scoreLabel:SKLabelNode! = nil
     
+    private var startButton:SKSpriteNode! = nil
+    private var instructionsButton:SKSpriteNode! = nil
+    
     private var boy:Boy! = nil
     private var currentTime:Int = 0
     
@@ -34,6 +37,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     private let VIRUS_DEDUCTION = 10
     private let HEALTH_INCREASE = 20
+    
+    private var start = false
     
     override func didMoveToView(view: SKView) {
         self.backgroundColor = SKColor.brownColor()
@@ -48,12 +53,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.physicsBody?.categoryBitMask = CollisionCategory.Wall
         self.physicsBody?.contactTestBitMask = CollisionCategory.Boy
         
+        start = false
+        
+        currentTime = 0
+        health = 100
+        score = 0
+        
         createHealthLabel()
         createScoreLabel()
         createViruses()
         createApple()
         
         createBoy()
+        
+        createButtons()
     }
     
     func createHealthLabel() {
@@ -96,12 +109,43 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(boy)
     }
     
+    func createButtons() {
+        let buttonsColourGreen:SKColor = SKColor(red: 0.706, green: 0.992, blue: 0.753, alpha: 1.0)
+        startButton = SKSpriteNode(color: buttonsColourGreen, size: CGSize(width: 200, height: 50))
+        startButton.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame) + startButton.size.height);
+        
+        var startLabel = SKLabelNode(
+            fontNamed:"BradleyHandITCTT-Bold"
+        )
+        startLabel.text = "Start"
+        startLabel.fontSize = 20
+        startLabel.fontColor = SKColor.purpleColor()
+        startButton.addChild(startLabel)
+        
+        self.addChild(startButton)
+        
+        instructionsButton = SKSpriteNode(color: buttonsColourGreen, size: CGSize(width: 200, height: 50))
+        instructionsButton.position = CGPoint(x:CGRectGetMidX(self.frame), y: startButton.position.y - (startButton.size.height * 2));
+        
+        var instructionsLabel = SKLabelNode(
+            fontNamed:"BradleyHandITCTT-Bold"
+        )
+        instructionsLabel.text = "Instructions"
+        instructionsLabel.fontSize = 20
+        instructionsLabel.fontColor = SKColor.purpleColor()
+        instructionsButton.addChild(instructionsLabel)
+        
+        self.addChild(instructionsButton)
+    }
+    
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        for touch: AnyObject in touches {
-            let location = touch.locationInNode(self)
-            
-            boy.move(location, scene: self)
-            
+        if self.start {
+            for touch: AnyObject in touches {
+                let location = touch.locationInNode(self)
+                
+                boy.move(location, scene: self)
+                
+            }
         }
     }
     
@@ -117,23 +161,38 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //    }
    
     override func update(currentTime: CFTimeInterval) {
-        /* Called before each frame is rendered */
-        if (round(Float(self.currentTime)) < round(Float(currentTime))) {
-            score++
-            updateScore()
-            self.currentTime = Int(round(Float(currentTime)))
-            if(self.currentTime % 1 == 0) {
-                viruses[currentVirusIndex].drop(self)
-                
-                currentVirusIndex++
-                if(currentVirusIndex == virusCount) {
-                    currentVirusIndex = 0
+        
+        if(self.start) {
+            /* Called before each frame is rendered */
+            if (round(Float(self.currentTime)) < round(Float(currentTime))) {
+                score++
+                updateScore()
+                self.currentTime = Int(round(Float(currentTime)))
+                if(self.currentTime % 1 == 0) {
+                    viruses[currentVirusIndex].drop(self)
+                    
+                    currentVirusIndex++
+                    if(currentVirusIndex == virusCount) {
+                        currentVirusIndex = 0
+                    }
+                }
+                if(self.currentTime % 4 == 0) {
+                    apple.drop(self)
                 }
             }
-            if(self.currentTime % 9 == 0) {
-                apple.drop(self)
+            
+            if health <= 0 {
+                runAction(SKAction.runBlock({self.gameOver()}))
             }
         }
+    }
+    
+    // display the game over scene
+    func gameOver() {
+        let flipTransition = SKTransition.flipHorizontalWithDuration(1.0)
+        let gameOverScene = GameOverScene(size: self.size, score: self.score)
+        gameOverScene.scaleMode = .AspectFill
+        self.view?.presentScene(gameOverScene, transition: flipTransition)
     }
     
     private func hitVirus() {
@@ -143,6 +202,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     private func hitApple() {
         health += HEALTH_INCREASE
+        if(health > 100) {
+            health = 100
+        }
         updateHealth()
     }
     
@@ -191,6 +253,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if(!virusNode.hit) {
                 hitVirus()
             }
+            
+            virusNode.hidden = true
             virusNode.hit = true
         }
         
@@ -201,7 +265,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if(!appleNode.hit) {
                 hitApple()
             }
+            appleNode.hidden = true
             appleNode.hit = true
+        }
+    }
+    
+    
+    override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
+        for touch: AnyObject in touches {
+            let location = touch.locationInNode(self)
+            if startButton.containsPoint(location) {
+                self.start = true
+                startButton.hidden = true
+                instructionsButton.hidden = true
+            }
+            if instructionsButton.containsPoint(location) {
+                println("tapped!")
+            }
         }
     }
 }

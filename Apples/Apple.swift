@@ -54,6 +54,6 @@ class Apple: SKSpriteNode {
     func resetPosition(scene:SKScene) {
         self.position = CGPoint(x: CGFloat(arc4random_uniform(UInt32(scene.size.width))), y: scene.size.height + (self.size.height * 2))
         self.hit = false
-        println("Apple reset pos")
+        self.hidden = false
     }
 }
