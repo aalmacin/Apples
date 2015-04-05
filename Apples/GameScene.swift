@@ -20,6 +20,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private var healthLabel:SKLabelNode! = nil
     private var boy:Boy! = nil
     private var health = 100
+    private var currentTime:Float = 0
+    
+    private let virusCount = 30
+    private var viruses:[Virus] = []
     
     override func didMoveToView(view: SKView) {
         self.backgroundColor = SKColor.brownColor()
@@ -35,24 +39,51 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.physicsBody?.contactTestBitMask = CollisionCategory.Boy
         
         createHealthLabel()
+        createViruses()
         
         boy = Boy(sceneSize: size)
         
-        boy.position = CGPoint(x:CGRectGetMinX(self.frame) + 50, y:CGRectGetMaxY(self.frame) - 50)
-        println(boy.size)
+        boy.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame) - 150)
         self.addChild(boy)
     }
     
     func createHealthLabel() {
         healthLabel = SKLabelNode(fontNamed:"Chalkduster")
-        healthLabel.text = "Health: \(health)";
+        healthLabel.text = "Health: \(health)%";
         healthLabel.fontSize = 16;
-        healthLabel.position = CGPoint(x:CGRectGetMinX(self.frame) + 50, y:CGRectGetMaxY(self.frame) - 50)
+        healthLabel.position = CGPoint(x:CGRectGetMinX(self.frame) + 100, y:CGRectGetMaxY(self.frame) - 50)
         self.addChild(healthLabel)
     }
     
+    func createViruses() {
+        for var i = 0; i < virusCount; i++ {
+            var newVirus = Virus(sceneSize: size)
+            let pos = CGFloat(arc4random_uniform(375))
+            newVirus.position = CGPoint(x: pos, y: 684)
+            viruses.append(newVirus)
+        }
+        self.addChild(viruses[1])
+    }
+    
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        
+        for touch: AnyObject in touches {
+            let location = touch.locationInNode(self)
+            
+            //            let sprite = SKSpriteNode(imageNamed:"Boy")
+            //
+            //            sprite.xScale = 0.5
+            //            sprite.yScale = 0.5
+            //            sprite.position = location
+            //
+            //            let action = SKAction.rotateByAngle(CGFloat(M_PI), duration:1)
+            //
+            //            sprite.runAction(SKAction.repeatActionForever(action))
+            //
+            //            self.addChild(sprite)
+            
+            boy.move(location, scene: self)
+            
+        }
     }
     
     override func touchesMoved(touches: NSSet, withEvent event: UIEvent) {
@@ -73,11 +104,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //
             //            self.addChild(sprite)
             
-            boy.teleport(location, scene: self)
+            boy.move(location, scene: self)
+            
         }
     }
    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
+        if (round(Float(self.currentTime)) < round(Float(currentTime))) {
+            self.currentTime = round(Float(currentTime))
+        }
     }
 }

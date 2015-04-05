@@ -15,13 +15,13 @@ class Virus: SKSpriteNode {
     private let virusSize = CGSize(width: CGFloat(1.0), height: CGFloat(1.0))
     
     init(sceneSize: CGSize) {
-        var randomVirusImg = "Virus \(Int(arc4random_uniform(4)) + 1)"
+        var randomVirusImg = "Virus\(Int(arc4random_uniform(4)) + 1)"
         super.init(
         texture: SKTexture(imageNamed: randomVirusImg),
         color: nil,
         size: CGSizeMake(
-            sceneSize.width * virusWidthPercent,
-            sceneSize.height * virusHeightPercent * virusSize.height
+            50,
+            50
             )
         )
         

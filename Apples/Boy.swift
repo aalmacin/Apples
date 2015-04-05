@@ -19,7 +19,7 @@ class Boy: SKSpriteNode {
             texture: SKTexture(imageNamed: "Boy"),
             color: nil,
             size: CGSizeMake(
-                50,
+                100,
                 100
             )
         )
@@ -36,7 +36,12 @@ class Boy: SKSpriteNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func teleport(point: CGPoint, scene:SKScene) {
-        self.position = CGPoint(x: point.x, y: point.y)
+    func move(point: CGPoint, scene:SKScene) {
+        
+        let moveAction = SKAction.moveTo(
+            CGPoint(x: point.x, y: point.y),
+            duration: 0.3
+        )
+        self.runAction(moveAction)
     }
 }
