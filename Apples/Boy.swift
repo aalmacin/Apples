@@ -7,6 +7,36 @@
 //
 import SpriteKit
 
-class Boy: SKNode {
-   
+class Boy: SKSpriteNode {
+    private let boySizePercent = CGFloat(0.15)
+    private let boyWidthPercent = CGFloat(0.075)
+    private let boyLengthPercent = CGFloat(0.15)
+    private let boyLength:CGFloat
+    
+    init(sceneSize: CGSize) {
+        boyLength = sceneSize.height * boyLengthPercent
+        super.init(
+            texture: SKTexture(imageNamed: "Boy"),
+            color: nil,
+            size: CGSizeMake(
+                50,
+                100
+            )
+        )
+        
+        self.physicsBody = SKPhysicsBody(texture: self.texture, size: self.size)
+        self.physicsBody?.friction = 0
+        self.physicsBody?.restitution = 0.5
+        self.physicsBody?.linearDamping = 0
+        self.physicsBody?.allowsRotation = false
+        self.physicsBody?.usesPreciseCollisionDetection = true
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func teleport(point: CGPoint, scene:SKScene) {
+        self.position = CGPoint(x: point.x, y: point.y)
+    }
 }
