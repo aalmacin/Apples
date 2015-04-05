@@ -13,6 +13,7 @@ class Apple: SKSpriteNode {
     private let AppleHeightPercent = CGFloat(0.025)
     private let AppleSpeed = CGFloat(5.0)
     private let AppleSize = CGSize(width: CGFloat(1.0), height: CGFloat(1.0))
+    var hit = false
     
     init(sceneSize: CGSize) {
         super.init(
@@ -26,10 +27,10 @@ class Apple: SKSpriteNode {
         
         self.physicsBody = SKPhysicsBody(texture: self.texture, size: self.size)
         self.physicsBody?.friction = 0
-        self.physicsBody?.restitution = 0.5
+        self.physicsBody?.restitution = 0
         self.physicsBody?.linearDamping = 0
-        self.physicsBody?.allowsRotation = true
-        self.physicsBody?.usesPreciseCollisionDetection = false
+        self.physicsBody?.allowsRotation = false
+        self.physicsBody?.usesPreciseCollisionDetection = true
         self.physicsBody?.categoryBitMask = CollisionCategory.Apple
         self.physicsBody?.contactTestBitMask = CollisionCategory.Virus
     }
@@ -38,15 +39,11 @@ class Apple: SKSpriteNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func startMoving(velocityMultiplier: CGFloat) {
-        self.physicsBody?.applyImpulse(CGVectorMake(0.0, velocityMultiplier * AppleSpeed * AppleSize.height))
-    }
-    
     func drop(scene:SKScene) {
         
         let moveAction = SKAction.moveTo(
             CGPoint(x: CGFloat(arc4random_uniform(UInt32(scene.size.width))), y: -scene.size.height),
-            duration: 1
+            duration: 1.5
         )
         
         self.runAction(moveAction, {
@@ -55,7 +52,8 @@ class Apple: SKSpriteNode {
     }
     
     func resetPosition(scene:SKScene) {
-        self.position.x = CGFloat(arc4random_uniform(UInt32(scene.size.width)))
-        self.position.y = scene.size.height + (self.size.height * 2)
+        self.position = CGPoint(x: CGFloat(arc4random_uniform(UInt32(scene.size.width))), y: scene.size.height + (self.size.height * 2))
+        self.hit = false
+        println("Apple reset pos")
     }
 }

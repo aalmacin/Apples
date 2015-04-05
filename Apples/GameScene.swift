@@ -17,9 +17,12 @@ struct CollisionCategory {
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
-    private var healthLabel:SKLabelNode! = nil
-    private var boy:Boy! = nil
     private var health = 100
+    private var healthLabel:SKLabelNode! = nil
+    private var score = 0
+    private var scoreLabel:SKLabelNode! = nil
+    
+    private var boy:Boy! = nil
     private var currentTime:Int = 0
     
     private var currentVirusIndex = 0
@@ -46,6 +49,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.physicsBody?.contactTestBitMask = CollisionCategory.Boy
         
         createHealthLabel()
+        createScoreLabel()
         createViruses()
         createApple()
         
@@ -58,6 +62,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         healthLabel.fontSize = 16;
         healthLabel.position = CGPoint(x:CGRectGetMinX(self.frame) + 100, y:CGRectGetMaxY(self.frame) - 50)
         self.addChild(healthLabel)
+    }
+    
+    func createScoreLabel() {
+        scoreLabel = SKLabelNode(fontNamed:"Chalkduster")
+        scoreLabel.text = "Score: \(score)";
+        scoreLabel.fontSize = 16;
+        scoreLabel.position = CGPoint(x:CGRectGetMinX(self.frame) + 250, y:CGRectGetMaxY(self.frame) - 50)
+        self.addChild(scoreLabel)
     }
     
     func createViruses() {
@@ -93,22 +105,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    override func touchesMoved(touches: NSSet, withEvent event: UIEvent) {
-        /* Called when a touch begins */
-        
-        for touch: AnyObject in touches {
-            let location = touch.locationInNode(self)
-            
-            boy.move(location, scene: self)
-            
-        }
-    }
+//    override func touchesMoved(touches: NSSet, withEvent event: UIEvent) {
+//        /* Called when a touch begins */
+//        
+//        for touch: AnyObject in touches {
+//            let location = touch.locationInNode(self)
+//            
+//            boy.move(location, scene: self)
+//            
+//        }
+//    }
    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
         if (round(Float(self.currentTime)) < round(Float(currentTime))) {
+            score++
+            updateScore()
             self.currentTime = Int(round(Float(currentTime)))
-            if(self.currentTime % 2 == 0) {
+            if(self.currentTime % 1 == 0) {
                 viruses[currentVirusIndex].drop(self)
                 
                 currentVirusIndex++
@@ -134,6 +148,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     private func updateHealth() {
         healthLabel.text = "Health: \(health)%";
+    }
+    
+    private func updateScore() {
+        scoreLabel.text = "Score: \(score)";
     }
     
     func isBoy(body:SKPhysicsBody) -> Bool {
@@ -166,29 +184,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             otherBody = contact.bodyA
         }
         
-//        // cannonball hit wall, so remove from screen
-//        if isWall(otherBody) || isTarget(otherBody) ||
-//            isBlocker(otherBody) {
-//                cannon.cannonballOnScreen = false
-//                cannonball.node?.removeFromParent()
-//        }
-        
         // cannonball hit blocker, so play blocker sound
-        if isVirus(otherBody) {
-            hitVirus()
+        if isVirus(otherBody) && isBoy(boy) {
             var virusNode = otherBody.node as Virus
-            virusNode.resetPosition(self)
-            
-            println(virusNode.position)
-            virusNode.removeAllActions()
+            //virusNode.resetPosition(self)
+            if(!virusNode.hit) {
+                hitVirus()
+            }
+            virusNode.hit = true
         }
         
         // cannonball hit target
-        if isApple(otherBody) {
-            hitApple()
+        if isApple(otherBody) && isBoy(boy) {
             var appleNode = otherBody.node as Apple
-            appleNode.resetPosition(self)
-            appleNode.removeAllActions()
+            //appleNode.resetPosition(self)
+            if(!appleNode.hit) {
+                hitApple()
+            }
+            appleNode.hit = true
         }
     }
 }

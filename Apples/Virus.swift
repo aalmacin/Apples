@@ -13,6 +13,7 @@ class Virus: SKSpriteNode {
     private let virusHeightPercent = CGFloat(0.025)
     private let virusSpeed = CGFloat(5.0)
     private let virusSize = CGSize(width: CGFloat(1.0), height: CGFloat(1.0))
+    var hit = false
     
     init(sceneSize: CGSize) {
         super.init(
@@ -26,10 +27,10 @@ class Virus: SKSpriteNode {
         
         self.physicsBody = SKPhysicsBody(texture: self.texture, size: self.size)
         self.physicsBody?.friction = 0
-        self.physicsBody?.restitution = 0.5
+        self.physicsBody?.restitution = 0
         self.physicsBody?.linearDamping = 0
-        self.physicsBody?.allowsRotation = true
-        self.physicsBody?.usesPreciseCollisionDetection = false
+        self.physicsBody?.allowsRotation = false
+        self.physicsBody?.usesPreciseCollisionDetection = true
         self.physicsBody?.categoryBitMask = CollisionCategory.Virus
         self.physicsBody?.contactTestBitMask = CollisionCategory.Apple
     }
@@ -46,11 +47,8 @@ class Virus: SKSpriteNode {
         texture = SKTexture(imageNamed: Virus.randomVirusImg())
     }
     
-    func startMoving(velocityMultiplier: CGFloat) {
-        self.physicsBody?.applyImpulse(CGVectorMake(0.0, velocityMultiplier * virusSpeed * virusSize.height))
-    }
-    
     func drop(scene:SKScene) {
+        self.resetTexture()
         
         let moveAction = SKAction.moveTo(
             CGPoint(x: CGFloat(arc4random_uniform(UInt32(scene.size.width))), y: -scene.size.height),
@@ -63,8 +61,8 @@ class Virus: SKSpriteNode {
     }
     
     func resetPosition(scene:SKScene) {
-        self.position.x = CGFloat(arc4random_uniform(UInt32(scene.size.width)))
-        self.position.y = scene.size.height + (self.size.height * 2)
-        self.resetTexture()
+        self.position = CGPoint(x: CGFloat(arc4random_uniform(UInt32(scene.size.width))), y: scene.size.height + (self.size.height * 2))
+        self.hit = false
+        println("Virus reset pos")
     }
 }
