@@ -19,8 +19,8 @@ class Apple: SKSpriteNode {
             texture: SKTexture(imageNamed: "Apple"),
             color: nil,
             size: CGSizeMake(
-                sceneSize.width * AppleWidthPercent,
-                sceneSize.height * AppleHeightPercent * AppleSize.height
+                50,
+                50
             )
         )
         
@@ -29,9 +29,9 @@ class Apple: SKSpriteNode {
         self.physicsBody?.restitution = 0.5
         self.physicsBody?.linearDamping = 0
         self.physicsBody?.allowsRotation = true
-        self.physicsBody?.usesPreciseCollisionDetection = true
+        self.physicsBody?.usesPreciseCollisionDetection = false
         self.physicsBody?.categoryBitMask = CollisionCategory.Apple
-        self.physicsBody?.contactTestBitMask = CollisionCategory.Boy
+        self.physicsBody?.contactTestBitMask = CollisionCategory.Virus
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -40,5 +40,22 @@ class Apple: SKSpriteNode {
     
     func startMoving(velocityMultiplier: CGFloat) {
         self.physicsBody?.applyImpulse(CGVectorMake(0.0, velocityMultiplier * AppleSpeed * AppleSize.height))
+    }
+    
+    func drop(scene:SKScene) {
+        
+        let moveAction = SKAction.moveTo(
+            CGPoint(x: CGFloat(arc4random_uniform(UInt32(scene.size.width))), y: -scene.size.height),
+            duration: 1
+        )
+        
+        self.runAction(moveAction, {
+            self.resetPosition(scene)
+        })
+    }
+    
+    func resetPosition(scene:SKScene) {
+        self.position.x = CGFloat(arc4random_uniform(UInt32(scene.size.width)))
+        self.position.y = scene.size.height + (self.size.height * 2)
     }
 }

@@ -20,10 +20,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     private var healthLabel:SKLabelNode! = nil
     private var boy:Boy! = nil
     private var health = 100
-    private var currentTime:Float = 0
+    private var currentTime:Int = 0
     
-    private let virusCount = 30
+    private var currentVirusIndex = 0
+    
+    private let virusCount = 5
     private var viruses:[Virus] = []
+    
+    private var apple:Apple! = nil
+    
+    private let VIRUS_DEDUCTION = 10
+    private let HEALTH_INCREASE = 20
     
     override func didMoveToView(view: SKView) {
         self.backgroundColor = SKColor.brownColor()
@@ -40,11 +47,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         createHealthLabel()
         createViruses()
+        createApple()
         
-        boy = Boy(sceneSize: size)
-        
-        boy.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame) - 150)
-        self.addChild(boy)
+        createBoy()
     }
     
     func createHealthLabel() {
@@ -58,28 +63,30 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func createViruses() {
         for var i = 0; i < virusCount; i++ {
             var newVirus = Virus(sceneSize: size)
-            let pos = CGFloat(arc4random_uniform(375))
-            newVirus.position = CGPoint(x: pos, y: 684)
+            let pos = CGFloat(arc4random_uniform(UInt32(self.size.width)))
+            newVirus.position = CGPoint(x: pos, y: size.height + (newVirus.size.height * 2))
             viruses.append(newVirus)
+            self.addChild(newVirus)
         }
-        self.addChild(viruses[1])
+    }
+    
+    func createApple() {
+        apple = Apple(sceneSize: size)
+        let pos = CGFloat(arc4random_uniform(UInt32(self.size.width)))
+        apple.position = CGPoint(x: pos, y: size.height + (apple.size.height * 2))
+        self.addChild(apple)
+    }
+    
+    func createBoy() {
+        boy = Boy(sceneSize: size)
+        
+        boy.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame) - 150)
+        self.addChild(boy)
     }
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         for touch: AnyObject in touches {
             let location = touch.locationInNode(self)
-            
-            //            let sprite = SKSpriteNode(imageNamed:"Boy")
-            //
-            //            sprite.xScale = 0.5
-            //            sprite.yScale = 0.5
-            //            sprite.position = location
-            //
-            //            let action = SKAction.rotateByAngle(CGFloat(M_PI), duration:1)
-            //
-            //            sprite.runAction(SKAction.repeatActionForever(action))
-            //
-            //            self.addChild(sprite)
             
             boy.move(location, scene: self)
             
@@ -92,18 +99,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for touch: AnyObject in touches {
             let location = touch.locationInNode(self)
             
-            //            let sprite = SKSpriteNode(imageNamed:"Boy")
-            //
-            //            sprite.xScale = 0.5
-            //            sprite.yScale = 0.5
-            //            sprite.position = location
-            //
-            //            let action = SKAction.rotateByAngle(CGFloat(M_PI), duration:1)
-            //
-            //            sprite.runAction(SKAction.repeatActionForever(action))
-            //
-            //            self.addChild(sprite)
-            
             boy.move(location, scene: self)
             
         }
@@ -112,7 +107,88 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
         if (round(Float(self.currentTime)) < round(Float(currentTime))) {
-            self.currentTime = round(Float(currentTime))
+            self.currentTime = Int(round(Float(currentTime)))
+            if(self.currentTime % 2 == 0) {
+                viruses[currentVirusIndex].drop(self)
+                
+                currentVirusIndex++
+                if(currentVirusIndex == virusCount) {
+                    currentVirusIndex = 0
+                }
+            }
+            if(self.currentTime % 9 == 0) {
+                apple.drop(self)
+            }
+        }
+    }
+    
+    private func hitVirus() {
+        health -= VIRUS_DEDUCTION
+        updateHealth()
+    }
+    
+    private func hitApple() {
+        health += HEALTH_INCREASE
+        updateHealth()
+    }
+    
+    private func updateHealth() {
+        healthLabel.text = "Health: \(health)%";
+    }
+    
+    func isBoy(body:SKPhysicsBody) -> Bool {
+        return body.categoryBitMask & CollisionCategory.Boy != 0
+    }
+    
+    func isVirus(body:SKPhysicsBody) -> Bool {
+        return body.categoryBitMask & CollisionCategory.Virus != 0
+    }
+    
+    func isApple(body:SKPhysicsBody) -> Bool {
+        return body.categoryBitMask & CollisionCategory.Apple != 0
+    }
+    
+    func isWall(body:SKPhysicsBody) -> Bool {
+        return body.categoryBitMask & CollisionCategory.Wall != 0
+    }
+    
+    // called when collision starts
+    func didBeginContact(contact: SKPhysicsContact) {
+        var boy: SKPhysicsBody
+        var otherBody: SKPhysicsBody
+        
+        // Find out which one is the boy body
+        if isBoy(contact.bodyA) {
+            boy = contact.bodyA
+            otherBody = contact.bodyB
+        } else {
+            boy = contact.bodyB
+            otherBody = contact.bodyA
+        }
+        
+//        // cannonball hit wall, so remove from screen
+//        if isWall(otherBody) || isTarget(otherBody) ||
+//            isBlocker(otherBody) {
+//                cannon.cannonballOnScreen = false
+//                cannonball.node?.removeFromParent()
+//        }
+        
+        // cannonball hit blocker, so play blocker sound
+        if isVirus(otherBody) {
+            hitVirus()
+            var virusNode = otherBody.node as Virus
+            virusNode.resetPosition(self)
+            
+            println(virusNode.position)
+            virusNode.removeAllActions()
+        }
+        
+        // cannonball hit target
+        if isApple(otherBody) {
+            hitApple()
+            var appleNode = otherBody.node as Apple
+            appleNode.resetPosition(self)
+            appleNode.removeAllActions()
         }
     }
 }
