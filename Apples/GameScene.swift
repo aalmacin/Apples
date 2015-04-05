@@ -176,7 +176,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         currentVirusIndex = 0
                     }
                 }
-                if(self.currentTime % 4 == 0) {
+                if(self.currentTime % 8 == 0) {
                     apple.drop(self)
                 }
             }
@@ -270,17 +270,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    // display the instructions scene
+    func instructions() {
+        let flipTransition = SKTransition.flipHorizontalWithDuration(1.0)
+        let instructionsScene = InstructionsScene(size: self.size)
+        instructionsScene.scaleMode = .AspectFill
+        self.view?.presentScene(instructionsScene, transition: flipTransition)
+    }
+    
     
     override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
-        for touch: AnyObject in touches {
-            let location = touch.locationInNode(self)
-            if startButton.containsPoint(location) {
-                self.start = true
-                startButton.hidden = true
-                instructionsButton.hidden = true
-            }
-            if instructionsButton.containsPoint(location) {
-                println("tapped!")
+        if !self.start {
+            for touch: AnyObject in touches {
+                let location = touch.locationInNode(self)
+                if startButton.containsPoint(location) {
+                    self.start = true
+                    startButton.hidden = true
+                    instructionsButton.hidden = true
+                }
+                if instructionsButton.containsPoint(location) {
+                    instructions()
+                }
             }
         }
     }

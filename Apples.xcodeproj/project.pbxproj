@@ -19,6 +19,7 @@
 		A927E3B61AD09CDD006540F0 /* Virus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A927E3B51AD09CDD006540F0 /* Virus.swift */; };
 		A927E3B81AD09CED006540F0 /* Apple.swift in Sources */ = {isa = PBXBuildFile; fileRef = A927E3B71AD09CED006540F0 /* Apple.swift */; };
 		A927E3BA1AD09D06006540F0 /* GameOverScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = A927E3B91AD09D06006540F0 /* GameOverScene.swift */; };
+		A927E3BC1AD1ED1E006540F0 /* InstructionsScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = A927E3BB1AD1ED1E006540F0 /* InstructionsScene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +49,7 @@
 		A927E3B51AD09CDD006540F0 /* Virus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Virus.swift; sourceTree = "<group>"; };
 		A927E3B71AD09CED006540F0 /* Apple.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Apple.swift; sourceTree = "<group>"; };
 		A927E3B91AD09D06006540F0 /* GameOverScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameOverScene.swift; sourceTree = "<group>"; };
+		A927E3BB1AD1ED1E006540F0 /* InstructionsScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstructionsScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +98,7 @@
 				A927E3B51AD09CDD006540F0 /* Virus.swift */,
 				A927E3B71AD09CED006540F0 /* Apple.swift */,
 				A927E3B91AD09D06006540F0 /* GameOverScene.swift */,
+				A927E3BB1AD1ED1E006540F0 /* InstructionsScene.swift */,
 				A927E3941AD09091006540F0 /* GameViewController.swift */,
 				A927E3961AD09091006540F0 /* Main.storyboard */,
 				A927E3991AD09091006540F0 /* Images.xcassets */,
@@ -236,6 +239,7 @@
 				A927E3BA1AD09D06006540F0 /* GameOverScene.swift in Sources */,
 				A927E3951AD09091006540F0 /* GameViewController.swift in Sources */,
 				A927E3B41AD09CC9006540F0 /* Boy.swift in Sources */,
+				A927E3BC1AD1ED1E006540F0 /* InstructionsScene.swift in Sources */,
 				A927E3B61AD09CDD006540F0 /* Virus.swift in Sources */,
 				A927E38F1AD09091006540F0 /* AppDelegate.swift in Sources */,
 			);

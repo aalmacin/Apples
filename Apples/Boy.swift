@@ -26,7 +26,7 @@ class Boy: SKSpriteNode {
         
         self.physicsBody = SKPhysicsBody(texture: self.texture, size: self.size)
         self.physicsBody?.friction = 0
-        self.physicsBody?.restitution = 0.5
+        self.physicsBody?.restitution = 0
         self.physicsBody?.linearDamping = 0
         self.physicsBody?.allowsRotation = false
         self.physicsBody?.usesPreciseCollisionDetection = true
@@ -38,8 +38,28 @@ class Boy: SKSpriteNode {
     
     func move(point: CGPoint, scene:SKScene) {
         
+        var pointX = point.x
+        var pointY = point.y
+        
+        if pointX > (scene.size.width - self.size.width) {
+            pointX = scene.size.width - (self.size.width / 2)
+        }
+            
+        if pointX < ( self.size.width) {
+            pointX = (self.size.width / 2)
+        }
+        
+        if pointY > (scene.size.height  - self.size.height) {
+            pointY = scene.size.height  - (self.size.height / 2)
+        }
+            
+        if pointY < self.size.height {
+            pointY = (self.size.height / 2)
+        }
+        
+        
         let moveAction = SKAction.moveTo(
-            CGPoint(x: point.x, y: point.y),
+            CGPoint(x: pointX, y: pointY),
             duration: 0.3
         )
         self.runAction(moveAction)
