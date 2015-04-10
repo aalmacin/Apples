@@ -8,13 +8,8 @@
 import SpriteKit
 
 class Boy: SKSpriteNode {
-    private let boySizePercent = CGFloat(0.15)
-    private let boyWidthPercent = CGFloat(0.075)
-    private let boyLengthPercent = CGFloat(0.15)
-    private let boyLength:CGFloat
     
     init(sceneSize: CGSize) {
-        boyLength = sceneSize.height * boyLengthPercent
         super.init(
             texture: SKTexture(imageNamed: "Boy"),
             color: nil,
@@ -24,23 +19,25 @@ class Boy: SKSpriteNode {
             )
         )
         
+        // Create the physicsbody object based off the initial texture
         self.physicsBody = SKPhysicsBody(texture: self.texture, size: self.size)
-        self.physicsBody?.friction = 0
-        self.physicsBody?.restitution = 0
-        self.physicsBody?.linearDamping = 0
         self.physicsBody?.allowsRotation = false
-        self.physicsBody?.usesPreciseCollisionDetection = true
+        self.physicsBody?.categoryBitMask = CollisionCategory.Boy
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // Moves the boy to wherever the player touched on the screen.
     func move(point: CGPoint, scene:SKScene) {
         
         var pointX = point.x
         var pointY = point.y
         
+        
+        //
+        // Makes sure that the boy doesn't go outside the screen
         if pointX > (scene.size.width - self.size.width) {
             pointX = scene.size.width - (self.size.width / 2)
         }
@@ -56,8 +53,10 @@ class Boy: SKSpriteNode {
         if pointY < self.size.height {
             pointY = (self.size.height / 2)
         }
+        //
+        //
         
-        
+        // Create and Run the move action
         let moveAction = SKAction.moveTo(
             CGPoint(x: pointX, y: pointY),
             duration: 0.3

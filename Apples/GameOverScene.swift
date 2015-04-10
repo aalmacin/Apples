@@ -5,50 +5,51 @@
 //  Created by Aldrin Jerome Almacin on 2015-04-04.
 //  Copyright (c) 2015 Almacin. All rights reserved.
 //
+// Shows the final score and makes the player play again
+
 import SpriteKit
 
 class GameOverScene: SKScene {
-    // configure GameOverScene
     init(size: CGSize, score: Int) {
         super.init(size: size)
         self.backgroundColor = SKColor.brownColor()
         
-        let gameOverLabel = SKLabelNode(fontNamed: "Chalkduster")
-        gameOverLabel.text = "Game Over"
-        gameOverLabel.fontSize = 60
-        gameOverLabel.fontColor = SKColor.whiteColor()
-        gameOverLabel.position.x = size.width / 2.0
-        gameOverLabel.position.y =
-            size.height / 2.0 + gameOverLabel.fontSize
-        self.addChild(gameOverLabel)
+        var background = SKSpriteNode(
+            texture: SKTexture(imageNamed: "GameBackground"),
+            color: nil,
+            size: self.size
+        )
+        background.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame))
+        self.addChild(background)
         
-        let elapsedTimeLabel = SKLabelNode(fontNamed: "Chalkduster")
+        // Create a colour to be used.
+        let labelColourGreen:SKColor = SKColor(red: 0.706, green: 0.992, blue: 0.753, alpha: 1.0)
+        
+        // Set the Labels to show. Final score and a message telling the user to click anywhere to play the game again.
+        let elapsedTimeLabel = SKLabelNode(fontNamed: "Futura-Medium")
         elapsedTimeLabel.text = "Final Score: \(score)"
-        elapsedTimeLabel.fontSize = 24
-        elapsedTimeLabel.fontColor = SKColor.whiteColor()
-        elapsedTimeLabel.position.x = size.width / 2.0
-        elapsedTimeLabel.position.y = size.height / 2.0
+        elapsedTimeLabel.fontSize = 40
+        elapsedTimeLabel.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame))
+        elapsedTimeLabel.fontColor = labelColourGreen
         self.addChild(elapsedTimeLabel)
         
-        let newGameLabel = SKLabelNode(fontNamed: "Chalkduster")
-        newGameLabel.text = "Begin New Game"
+        // Create the label that tells the user that he will return to the main game scene/main menu by clicking anywhere
+        let newGameLabel = SKLabelNode(fontNamed: "Futura-Medium")
+        newGameLabel.text = "Touch anywhere to play again"
         newGameLabel.fontSize = 24
-        newGameLabel.fontColor = SKColor.whiteColor()
-        newGameLabel.position.x = size.width / 2.0
-        newGameLabel.position.y =
-            size.height / 2.0 - gameOverLabel.fontSize
+        newGameLabel.position = CGPoint(x:CGRectGetMidX(self.frame), y: elapsedTimeLabel.position.y + (elapsedTimeLabel.fontSize * 2));
+        newGameLabel.fontColor = labelColourGreen
         self.addChild(newGameLabel)
     }
     
-    // not called, but required if you override SKScene's init
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    // present a new GameScene when user touches screen
+    // When the user touches anywhere, the main game scene will be shown.
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         let scene = MainGameScene(size: self.size)
         scene.scaleMode = .AspectFill
-        self.view?.presentScene(scene, transition: SKTransition.crossFadeWithDuration(1.0))
+        self.view?.presentScene(scene)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

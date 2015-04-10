@@ -7,62 +7,26 @@
 //
 import SpriteKit
 
-class Virus: SKSpriteNode {
+class Virus: DroppableItem {
+    let DROP_SPEED = 3.0
     
-    private let virusWidthPercent = CGFloat(0.025)
-    private let virusHeightPercent = CGFloat(0.025)
-    private let virusSpeed = CGFloat(5.0)
-    private let virusSize = CGSize(width: CGFloat(1.0), height: CGFloat(1.0))
-    var hit = false
-    
-    init(sceneSize: CGSize) {
+    // The initialization method/Constructor for the Virus Object
+    init(sceneSize: CGSize, imageNamed: String) {
+        // Call the parent class' init method. Set the Drop speed to the constant
         super.init(
-        texture: SKTexture(imageNamed: Virus.randomVirusImg()),
-        color: nil,
-        size: CGSizeMake(
-            50,
-            50
-            )
+        sceneSize: sceneSize,
+        imageNamed: imageNamed,
+        dropSpeed: DROP_SPEED
         )
-        
-        self.physicsBody = SKPhysicsBody(texture: self.texture, size: self.size)
-        self.physicsBody?.friction = 0
-        self.physicsBody?.restitution = 0
-        self.physicsBody?.linearDamping = 0
-        self.physicsBody?.allowsRotation = false
-        self.physicsBody?.usesPreciseCollisionDetection = true
+    }
+    
+    // Override the setBitMask function from DroppableItem class
+    override func setBitMask() {
         self.physicsBody?.categoryBitMask = CollisionCategory.Virus
-        self.physicsBody?.contactTestBitMask = CollisionCategory.Apple
+        self.physicsBody?.contactTestBitMask = CollisionCategory.Boy
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    class func randomVirusImg() -> String {
-        return "Virus\(Int(arc4random_uniform(4)) + 1)"
-    }
-    
-    func resetTexture() {
-        texture = SKTexture(imageNamed: Virus.randomVirusImg())
-    }
-    
-    func drop(scene:SKScene) {
-        self.resetTexture()
-        
-        let moveAction = SKAction.moveTo(
-            CGPoint(x: CGFloat(arc4random_uniform(UInt32(scene.size.width))), y: -scene.size.height),
-            duration: 3
-        )
-        
-        self.runAction(moveAction, {
-            self.resetPosition(scene)
-        })
-    }
-    
-    func resetPosition(scene:SKScene) {
-        self.position = CGPoint(x: CGFloat(arc4random_uniform(UInt32(scene.size.width))), y: scene.size.height + (self.size.height * 2))
-        self.hit = false
-        self.hidden = false
     }
 }

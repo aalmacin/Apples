@@ -14,19 +14,16 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let scene = MainGameScene(size: view.bounds.size)
-        scene.scaleMode = .AspectFill
-        
+        // Create a SpriteKit view object which will show all the sprites on the page
         let skView = self.view as SKView
-        skView.showsFPS = true
-        skView.showsNodeCount = true
+        skView.showsFPS = false
+        skView.showsNodeCount = false
         
-        /* Sprite Kit applies additional optimizations to improve rendering performance */
         skView.ignoresSiblingOrder = true
         
-        /* Set the scale mode to scale to fit the window */
+        // Create the main game scene and make it the default scene to show after the splash screen
+        let scene = MainGameScene(size: view.bounds.size)
         scene.scaleMode = .AspectFill
-        
         skView.presentScene(scene)
     }
 }
