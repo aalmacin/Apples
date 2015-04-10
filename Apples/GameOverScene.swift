@@ -47,7 +47,7 @@ class GameOverScene: SKScene {
     
     // present a new GameScene when user touches screen
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        let scene = GameScene(size: self.size)
+        let scene = MainGameScene(size: self.size)
         scene.scaleMode = .AspectFill
         self.view?.presentScene(scene, transition: SKTransition.crossFadeWithDuration(1.0))
     }
