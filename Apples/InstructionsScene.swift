@@ -27,7 +27,7 @@ class InstructionsScene: SKScene {
         instructionsLabel1.position.y = instructionsHeaderLabel.position.y - 50 + instructionsLabel1.fontSize
         self.addChild(instructionsLabel1)
         
-        let instructionsLabel2 = createInstructionsLabel("You will gain 20% health when you get hit by an apple.")
+        let instructionsLabel2 = createInstructionsLabel("You will gain 20% health and 20 points when you get hit by an apple.")
         instructionsLabel2.position.y = instructionsLabel1.position.y - 50 + instructionsLabel2.fontSize
         self.addChild(instructionsLabel2)
         

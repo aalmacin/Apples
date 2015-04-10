@@ -15,7 +15,7 @@ struct CollisionCategory {
     static let Wall : UInt32 = 1 << 3
 }
 
-class GameScene: SKScene, SKPhysicsContactDelegate {
+class MainGameScene: SKScene, SKPhysicsContactDelegate {
     
     private var health = 100
     private var healthLabel:SKLabelNode! = nil
@@ -37,6 +37,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     private let VIRUS_DEDUCTION = 10
     private let HEALTH_INCREASE = 20
+    private let SCORE_INCREASE = 20
     
     private var start = false
     
@@ -205,6 +206,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if(health > 100) {
             health = 100
         }
+        score += SCORE_INCREASE
         updateHealth()
     }
     
