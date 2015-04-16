@@ -134,7 +134,7 @@ class MainGameScene: SKScene, SKPhysicsContactDelegate {
     // Creates the apple which helps the player stay alive by adding health.
     func createApple() {
         // Create a new apple passing this screen's size
-        apple = Apple(sceneSize: size, imageNamed: "Apple")
+        apple = Apple(sceneSize: size, imageNamed: "apple")
         let pos = CGFloat(arc4random_uniform(UInt32(self.size.width)))
         
         // Set the position outside the screen
